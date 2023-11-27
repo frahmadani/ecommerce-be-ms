@@ -130,6 +130,9 @@ class UserService {
         case 'CREATE_ORDER':
             this.ManageOrder(userId, order);
             break;
+        case 'TEST':
+            console.log('Working event listener');
+            break;
         default:
             break;
         }

@@ -1,0 +1,17 @@
+const UserService = require('../services/user-service');
+
+module.exports = (app) => {
+
+    const service = new UserService();
+
+    app.post('/events', (req, res, next) => {
+
+        const { payload } = req.body;
+
+        service.SubscribeEvents(payload);
+
+        console.log('Received event from Order service');
+        return res.status(200).json(payload);
+    });
+
+};

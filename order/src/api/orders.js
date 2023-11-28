@@ -17,9 +17,11 @@ module.exports = (app) => {
         try {
             const { data } = await service.createOrder({ _id, transactionId });
 
+            console.log('Data: ', data);
+
             const payload = await service.getOrderPayload(_id, data, 'CREATE_ORDER');
 
-            PublishUserEvents(payload);
+            PublishUserEvents(payload.data);
 
             return res.status(200).json(data);
 

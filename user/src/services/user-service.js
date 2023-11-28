@@ -102,6 +102,7 @@ class UserService {
     }
 
     async ManageOrder(userId, order) {
+        console.log('========= Entering ManageOrder =======');
         try {
             const orderResult = await this.repository.CreateOrderForUser(userId, order);
 
@@ -114,6 +115,9 @@ class UserService {
     async SubscribeEvents(payload) {
 
         const { event, data } = payload;
+
+        console.log('Event: ', event);
+        console.log('Data: ', data);
 
         const { userId, product, order, qty } = data;
 
@@ -129,6 +133,8 @@ class UserService {
             this.ManageCart(userId, product, qty, true);
             break;
         case 'CREATE_ORDER':
+            console.log('userId: ', userId),
+            console.log('order: ', order);
             this.ManageOrder(userId, order);
             break;
         default:

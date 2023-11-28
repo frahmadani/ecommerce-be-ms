@@ -12,5 +12,6 @@ if (process.env.NODE_ENV !== 'prod') {
 module.exports = {
     PORT: process.env.PORT,
     MONGO_URI: process.env.MONGO_URI,
-    BASE_URL: process.env.BASE_URL
+    BASE_URL: process.env.BASE_URL,
+    APP_SECRET: process.env.APP_SECRET
 };

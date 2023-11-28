@@ -56,8 +56,8 @@ module.exports.PublishUserEvents = async (payload) => {
 
 module.exports.PublishOrderEvents = async (payload) => {
 
-    // axios.post('http://localhost:3003/product/events', { payload });
+    axios.post('http://localhost:3003/order/events', { payload });
 
-    console.log('Sending event to Order service - skipped');
+    console.log('Sending event to Order service', payload);
     
 };

@@ -11,7 +11,6 @@ module.exports = (app) => {
         service.SubscribeEvents(payload);
 
         console.log('Received event from Order service');
-        console.log('Event content: ', payload );
         return res.status(200).json(payload);
     });
 

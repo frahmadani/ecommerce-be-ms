@@ -1,3 +1,4 @@
+const database = require('../../../product/src/database');
 const { UserRepository } = require('../database');
 const { formattedData, generatePassword, generateSalt, generateSignature, validatePassword  } = require('../utils');
 const { APIError, BadRequestError } = require('../utils/app-errors');
@@ -129,9 +130,6 @@ class UserService {
             break;
         case 'CREATE_ORDER':
             this.ManageOrder(userId, order);
-            break;
-        case 'TEST':
-            console.log('Working event listener');
             break;
         default:
             break;

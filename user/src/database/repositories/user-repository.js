@@ -170,7 +170,7 @@ class UserRepository {
 
                 user.orders.push(order);
 
-                order.cart = [];
+                user.cart = [];
 
                 const userWithUpdatedOrder = await user.save();
 

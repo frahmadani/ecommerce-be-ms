@@ -1,15 +1,16 @@
 const express = require('express');
 const cors = require('cors');
-const { products, events } = require('./api');
+const { orders, events } = require('./api');
 
 module.exports = async (app) => {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true, limit: '1mb' }));
     app.use(cors());
     
-    // API event listener
+    // Event handler (API)
     events(app);
 
-    // Product APIs
-    products(app);
+    // API
+    orders(app);
+
 };

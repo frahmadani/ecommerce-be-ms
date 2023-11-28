@@ -16,7 +16,7 @@ class UserRepository {
             return userResult;
 
         } catch (err) {
-            throw APIError('API Error', 500, 'Unable to find user');
+            throw new APIError('API Error', 500, 'Unable to find user');
         }
     }
 
@@ -27,7 +27,7 @@ class UserRepository {
             return existingUser;
 
         } catch (err) {
-            throw APIError('API Error', 404, 'Unable to find user');
+            throw new APIError('API Error', 404, 'Unable to find user');
         }
     }
 
@@ -38,7 +38,7 @@ class UserRepository {
             return existingUser;
 
         } catch (err) {
-            throw APIError('API Error', 404, 'Unable to find user');
+            throw new APIError('API Error', 404, 'Unable to find user');
         }
     }
 
@@ -49,7 +49,7 @@ class UserRepository {
             return user.wishlist;
 
         } catch (err) {
-            throw APIError('API Error', 500, 'Unable to retrieve wishlist');
+            throw new APIError('API Error', 500, 'Unable to retrieve wishlist');
         }
     }
 
@@ -95,7 +95,7 @@ class UserRepository {
             return userResult.wishlist;
 
         } catch (err) {
-            throw APIError('API Error', 500, 'Unable to add item to wishlist');
+            throw new APIError('API Error', 500, 'Unable to add item to wishlist');
         }
     }
 
@@ -152,7 +152,7 @@ class UserRepository {
 
         } catch (err) {
 
-            throw APIError('API Error', 500, 'Unable to add item to cart');
+            throw new APIError('API Error', 500, 'Unable to add item to cart');
         }
     } 
 
@@ -160,7 +160,7 @@ class UserRepository {
         
         try {
             
-            const user = UserModel.findById(userId);
+            const user = await UserModel.findById(userId);
 
             if (user) {
 
@@ -170,7 +170,7 @@ class UserRepository {
 
                 user.orders.push(order);
 
-                order.cart = [];
+                user.cart = [];
 
                 const userWithUpdatedOrder = await user.save();
 
@@ -180,7 +180,7 @@ class UserRepository {
             throw new Error('Unable to create order');
 
         } catch (err) {
-            throw APIError('API Error', 500, 'Unable to create order');
+            throw new APIError('API Error', 500, 'Unable to create order');
         }
 
     }

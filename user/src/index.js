@@ -12,7 +12,7 @@ const StartServer = async () => {
     await expressApp(app);
 
     app.listen(PORT, () => {
-        console.log(`User service istening on port ${PORT}`);
+        console.log(`User service listening on port ${PORT}`);
     })
         .on('error', (err) => {
             console.log(err);

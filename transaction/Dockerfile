@@ -2,7 +2,7 @@
 FROM node:alpine
 
 # Set the working directory to /usr/src/app
-WORKDIR /usr/src/app
+WORKDIR /app/transaction
 
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
@@ -12,6 +12,9 @@ RUN npm install
 
 # Copy the rest of the application files to the container
 COPY . .
+
+# Expose port
+EXPOSE 3004
 
 # Set the command to start the app
 CMD [ "npm", "start" ]

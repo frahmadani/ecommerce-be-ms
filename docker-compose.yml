@@ -1,78 +1,97 @@
-version: "3.8"
+version: "3"
 
 services:
-  user:
-    build: ./user
-    ports:
-      - "3001:3001"
-    depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-    env_file:
-      - ./user/.env
-    networks:
-      - ecommerce
 
-  product:
-    build: ./product
+  nosql-db:
+    image: mvertes/alpine-mongo
     ports:
-      - "3002:3002"
-    depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-    env_file:
-      - ./product/.env
-    networks:
-      - ecommerce
-
-  order:
-    build: ./order
-    ports:
-      - "3003:3003"
-    depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-    env_file:
-      - ./order/.env
-    networks:
-      - ecommerce
-
-  transaction:
-    build: ./transaction
-    ports:
-      - "3004:3004"
-    depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-    env_file:
-      - ./order/.env
-    networks:
-      - ecommerce
+      - "27017:27017"
+    container_name: nosql-db
+    volumes:
+      - ./db/:/data/db
 
   rabbitmq:
-    image: rabbitmq:3.8-management-alpine
-    container_name: 'rabbitmq'
+    image: rabbitmq:alpine
+    container_name: rabbitmq
     ports:
-        - 5672:5672
-        - 15672:15672
+      - '5672:5672'
+
+  product:
+    build:
+      dockerfile: Dockerfile
+      context: ./product
+    container_name: product
+    ports:
+      - "3002:3002"
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
     volumes:
-        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
-        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
-    networks:
-        - ecommerce
+      - .:/app
+      - /app/product/node_modules
+    env_file:
+      - ./product/.env.dev
 
-  # api-gateway:
-  #   build: ./api-gateway
+  order:
+    build:
+      dockerfile: Dockerfile
+      context: ./order
+    container_name: order
+    ports:
+      - "3003:3003"
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app
+      - /app/order/node_modules
+    env_file:
+      - ./order/.env.dev
+
+  transaction:
+    build:
+      dockerfile: Dockerfile
+      context: ./transaction
+    container_name: transaction
+    ports:
+      - "3004:3004"
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app
+      - /app/transaction/node_modules
+    env_file:
+      - ./transaction/.env.dev
+
+  user:
+    build:
+      dockerfile: Dockerfile
+      context: ./user
+    container_name: user
+    ports:
+      - "3001:3001"
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app/
+      - /app/user/node_modules
+    env_file:
+      - ./user/.env.dev
+
+  # nginx-proxy:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./proxy
+  #   depends_on:
+  #     - product
+  #     - order
+  #     - user
+  #     - transaction
   #   ports:
-  #     - "3003:3003"
-  #   environment:
-  #     - RABBITMQ_URL=amqp://rabbitmq:5672
-  #   networks:
-  #     - ecommerce
-
-networks:
-  ecommerce:
+  #     - 80:80

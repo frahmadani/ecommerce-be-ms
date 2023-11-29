@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { users, events } = require('./api');
-const ErrorHandler = require('./utils/error-handlers');
+const { transactions, events } = require('./api');
 
 module.exports = async (app) => {
     app.use(express.json());
@@ -12,8 +11,6 @@ module.exports = async (app) => {
     events(app);
 
     // API
-    users(app);
-
-    app.use(ErrorHandler);
+    transactions(app);
 
 };

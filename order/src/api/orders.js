@@ -1,6 +1,5 @@
-const { PublishOrderEvents } = require('../../../product/src/utils');
 const OrderService = require('../services/order-service');
-const { PublishUserEvents } = require('../utils');
+const { PublishUserEvents, PublishTransactionEvents } = require('../utils');
 const isAuth = require('./middlewares/auth');
 
 module.exports = (app) => {
@@ -22,6 +21,7 @@ module.exports = (app) => {
             const payload = await service.getOrderPayload(_id, data, 'CREATE_ORDER');
 
             PublishUserEvents(payload.data);
+            PublishTransactionEvents(payload.data);
 
             return res.status(200).json(data);
 

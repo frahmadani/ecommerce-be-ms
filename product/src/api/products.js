@@ -1,7 +1,9 @@
 const ProductService = require('../services/product-service');
-const uuidv4 = 
+const { PublishOrderEvents, PublishUserEvents } = require('../utils');
+const isAuth = require('./middlewares/auth');
 
 module.exports = (app) => {
+
     const service = new ProductService();
 
     app.post('/product/create', async (req, res, next) => {
@@ -14,15 +16,85 @@ module.exports = (app) => {
         return res.json(data);
     });
 
-    app.get('/:id', async (req, res, next) => {
+    app.get('/product/:id', async (req, res, next) => {
         const productId = req.params.id;
 
         try {
-            const { data } = await service.getProductDetail(productId);
+            const { data } = await service.getProductById(productId);
             return res.status(200).json(data);
         } catch (err) {
             return res.status(404).json({ err });
         }
+    });
+
+    app.get('/product', async (req, res, next) => {
+        try {
+            const { data } = await service.getProducts();
+            return res.status(200).json(data);
+        } catch (error) {
+            return res.status(404).json({ error });
+        }
+    });
+
+    app.get('/product/category/:type', async (req, res, next) => {
+        const type = req.params.type;
+
+        try {
+            const { data } = await service.getProductsByCategory(type);
+            return res.json(data);
+        } catch (error) {
+            return res.status(404).json({ error });
+        }
+    });
+
+    app.put('/product/cart', isAuth, async (req, res, next) => {
+
+        const userId = req.user._id;
+        const { _id, qty } = req.body;
+
+        try {
+            const { data } = await service.getProductPayload(userId, { productId: _id, qty: qty }, 'ADD_TO_CART');
+
+            console.log('Data yg dikirim ke user service dan order service: ', data);
+
+            PublishUserEvents(data);
+            PublishOrderEvents(data);
+
+            const response = {
+                product: data.data.product,
+                qty: data.data.qty
+            };
+
+            return res.status(200).json(response);
+
+        } catch (error) {
+            return res.status(500).json({ error });
+        }
+
+    });
+
+    app.delete('/product/cart/:id', isAuth, async (req, res, next) => {
+
+        const userId = req.user._id;
+        const productId = req.params.id;
+
+        try {
+            const { data } = await service.getProductPayload(userId, { productId }, 'REMOVE_FROM_CART');
+
+            PublishUserEvents(data);
+            PublishOrderEvents(data);
+
+            const response = {
+                product: data.data.product,
+                qty: data.data.qty
+            };
+
+            return res.status(200).json(response);
+
+        } catch (error) {
+            return res.status(500).json({ error });
+        }
+        
     });
 
 };

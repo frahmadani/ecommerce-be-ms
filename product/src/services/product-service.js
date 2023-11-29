@@ -29,7 +29,7 @@ class ProductService {
         });
     }
 
-    async getProductDetail(productId) {
+    async getProductById(productId) {
 
         const product = await this.repository.FindProductById(productId);
         return formattedData(product);
@@ -39,6 +39,25 @@ class ProductService {
 
         const products = await this.repository.FindByCategory(category);
         return formattedData(products);
+    }
+
+    async getProductPayload(userId, { productId, qty}, event) {
+
+        const product = await this.repository.FindProductById(productId);
+
+        if (product) {
+            const payload = {
+                event,
+                data: {
+                    userId,
+                    product,
+                    qty
+                }
+            };
+            return formattedData(payload);
+        }
+
+        return formattedData({ error: 'No product found'});
     }
 
 }

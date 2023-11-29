@@ -3,13 +3,17 @@ const { PORT } = require('./config');
 const { databaseConn } = require('./database');
 const expressApp = require('./express-app');
 
+const { CreateChannel } = require('./utils');
+
 const StartServer = async () => {
 
     const app = express();
 
     await databaseConn();
 
-    await expressApp(app);
+    const channel = CreateChannel();
+
+    await expressApp(app, channel);
 
     app.listen(PORT, () => {
         console.log(`Order service istening on port ${PORT}`);

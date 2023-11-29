@@ -3,16 +3,16 @@ const cors = require('cors');
 const { users, events } = require('./api');
 const ErrorHandler = require('./utils/error-handlers');
 
-module.exports = async (app) => {
+module.exports = async (app, channel) => {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true, limit: '1mb' }));
     app.use(cors());
     
     // Event handler (API)
-    events(app);
+    // events(app);
 
     // API
-    users(app);
+    users(app, channel);
 
     app.use(ErrorHandler);
 

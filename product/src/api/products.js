@@ -1,8 +1,9 @@
 const ProductService = require('../services/product-service');
-const { PublishOrderEvents, PublishUserEvents } = require('../utils');
+const { PublishOrderEvents, PublishUserEvents, PublishMessage } = require('../utils');
 const isAuth = require('./middlewares/auth');
+const { USER_BINDING_KEY, ORDER_BINDING_KEY } = require('../config');
 
-module.exports = (app) => {
+module.exports = (app, channel) => {
 
     const service = new ProductService();
 
@@ -57,8 +58,11 @@ module.exports = (app) => {
 
             console.log('Data yg dikirim ke user service dan order service: ', data);
 
-            PublishUserEvents(data);
-            PublishOrderEvents(data);
+            // PublishUserEvents(data);
+            // PublishOrderEvents(data);
+
+            PublishMessage(channel, USER_BINDING_KEY, JSON.stringify(data));
+            PublishMessage(channel, ORDER_BINDING_KEY, JSON.stringify(data));
 
             const response = {
                 product: data.data.product,
@@ -81,8 +85,11 @@ module.exports = (app) => {
         try {
             const { data } = await service.getProductPayload(userId, { productId }, 'REMOVE_FROM_CART');
 
-            PublishUserEvents(data);
-            PublishOrderEvents(data);
+            // PublishUserEvents(data);
+            // PublishOrderEvents(data);
+
+            PublishMessage(channel, USER_BINDING_KEY, JSON.stringify(data));
+            PublishMessage(channel, ORDER_BINDING_KEY, JSON.stringify(data));
 
             const response = {
                 product: data.data.product,

@@ -114,10 +114,9 @@ class UserService {
 
     async SubscribeEvents(payload) {
 
-        const { event, data } = payload;
+        payload = JSON.parse(payload);
 
-        console.log('Event: ', event);
-        console.log('Data: ', data);
+        const { event, data } = payload;
 
         const { userId, product, order, qty } = data;
 
@@ -133,8 +132,6 @@ class UserService {
             this.ManageCart(userId, product, qty, true);
             break;
         case 'CREATE_ORDER':
-            console.log('userId: ', userId),
-            console.log('order: ', order);
             this.ManageOrder(userId, order);
             break;
         default:

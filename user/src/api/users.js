@@ -1,9 +1,13 @@
 const UserService = require('../services/user-service');
 const UserAuth = require('./middlewares/auth');
 
-module.exports = (app) => {
+const { SubscribeMessage } = require('../utils');
+const { USER_BINDING_KEY } = require('../config');
+
+module.exports = (app, channel) => {
     
     const service = new UserService();
+    SubscribeMessage(channel, service, USER_BINDING_KEY);
 
     app.post('/user/signup', async (req, res, next) => {
         try {

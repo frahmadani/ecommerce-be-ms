@@ -1,10 +1,13 @@
 const OrderService = require('../services/order-service');
-const { PublishUserEvents, PublishTransactionEvents } = require('../utils');
+const { SubscribeMessage, PublishMessage } = require('../utils');
+const { USER_BINDING_KEY, ORDER_BINDING_KEY } = require('../config');
 const isAuth = require('./middlewares/auth');
 
-module.exports = (app) => {
+module.exports = (app, channel) => {
 
     const service = new OrderService();
+
+    SubscribeMessage(channel, service, ORDER_BINDING_KEY);
 
     app.post('/order/create', isAuth, async (req, res, next) => {
 
@@ -20,8 +23,10 @@ module.exports = (app) => {
 
             const payload = await service.getOrderPayload(_id, data, 'CREATE_ORDER');
 
-            PublishUserEvents(payload.data);
-            PublishTransactionEvents(payload.data);
+            // PublishUserEvents(payload.data);
+            PublishMessage(channel, USER_BINDING_KEY, JSON.stringify(payload.data));
+
+            // PublishTransactionEvents(payload.data); --> TODO
 
             return res.status(200).json(data);
 

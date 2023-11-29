@@ -14,5 +14,10 @@ module.exports = {
     PORT: process.env.PORT,
     MONGO_URI: process.env.MONGO_URI,
     BASE_URL: process.env.BASE_URL,
-    APP_SECRET: process.env.APP_SECRET
+    APP_SECRET: process.env.APP_SECRET,
+    MESSAGEBROKER_URL: process.env.MESSAGEBROKER_URL,
+    EXCHANGE_NAME: 'ECOMMERCE_APP_EXCHANGE',
+    ORDER_BINDING_KEY: 'ORDER_BINDING_KEY',
+    USER_BINDING_KEY: 'USER_BINDING_KEY',
+    QUEUE_NAME: process.env.QUEUE_NAME
 };

@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const amqplib = require('amqplib');
 
-const { APP_SECRET } = require('../config');
+const { APP_SECRET, MESSAGEBROKER_URL, EXCHANGE_NAME, QUEUE_NAME, ORDER_BINDING_KEY } = require('../config');
 
 module.exports.generateSalt = async () => {
     return await bcrypt.genSalt();
@@ -51,7 +52,7 @@ module.exports.validateSignature = async (req) => {
 
 module.exports.PublishUserEvents = async (payload) => {
 
-    axios.post('http://user:3001/user/events', { payload });
+    axios.post('http://localhost:3001/user/events', { payload });
 
     console.log('Sending event to User service', payload);
 
@@ -59,7 +60,66 @@ module.exports.PublishUserEvents = async (payload) => {
 
 module.exports.PublishTransactionEvents = async (payload) => {
 
-    axios.post('http://transaction:3004/transaction/events', { payload });
+    axios.post('http://localhost:3004/transaction/events', { payload });
 
     console.log('Sending event to Transaction service', payload);
+};
+
+
+// Message Broker methods
+
+module.exports.CreateChannel = async () => {
+
+    try {
+
+        const connection = await amqplib.connect(MESSAGEBROKER_URL);
+        const channel = await connection.createChannel();
+        await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: false });
+
+        return channel;
+    
+    } catch (error) {
+        return error;
+    }
+
+};
+
+module.exports.PublishMessage = async (channel, binding_key, message) => {
+
+    try {
+        await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: false });
+        await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
+        console.log('Message sent: ', message);
+
+
+    } catch (error) {
+        return error;
+    }
+};
+
+module.exports.SubscribeMessage = async (channel, service, binding_key) => {
+
+    try {
+        console.log('Order service subscribing...');
+
+        await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: false });
+
+        console.log('Order service finish asserting exchange');
+
+        const appQueue = await channel.assertQueue(QUEUE_NAME);
+
+        channel.bindQueue(appQueue.queue, EXCHANGE_NAME, binding_key);
+
+        console.log(`Listening to exchange_name: ${EXCHANGE_NAME}, with binding_key: ${binding_key} and queue ${QUEUE_NAME}`);
+
+        channel.consume(appQueue.queue, data => {
+            console.log('Receive data: ');
+            console.log(data.content.toString());
+            service.SubscribeEvents(data.content.toString());
+            channel.ack(data);
+        });
+
+    } catch (error) {
+        return error;
+    }
 };

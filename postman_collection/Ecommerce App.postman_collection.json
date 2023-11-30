@@ -1,0 +1,341 @@
+{
+	"info": {
+		"_postman_id": "e18c1342-925f-4eed-af4d-d62416d48885",
+		"name": "Ecommerce App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3500918",
+		"_collection_link": "https://orange-water-2052.postman.co/workspace/Team-Workspace~3698c654-5b53-4cdc-8516-0e46fdc8cc2b/collection/3500918-e18c1342-925f-4eed-af4d-d62416d48885?action=share&source=collection_link&creator=3500918"
+	},
+	"item": [
+		{
+			"name": "User Service",
+			"item": [
+				{
+					"name": "User_Sign_Up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "frahmadani@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "test123db",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{USER_BASE_URL}}/user/signup",
+							"host": [
+								"{{USER_BASE_URL}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_Sign_In",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "frahmadani@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "test123db",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{USER_BASE_URL}}/user/signin",
+							"host": [
+								"{{USER_BASE_URL}}"
+							],
+							"path": [
+								"user",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_Get_Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{USER_BASE_URL}}/user/profile",
+							"host": [
+								"{{USER_BASE_URL}}"
+							],
+							"path": [
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product Service",
+			"item": [
+				{
+					"name": "Product_Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}\n        \"name\": \"Hoodie with Logo\",\n        \"desc\": \"This is a simple product.\",\n        \"banner\": \"http://www.google.com/image.jpeg\",\n        \"type\": \"outer\",\n        \"unit\": 1,\n        \"price\": 150000,\n        \"available\": true,\n        \"supplier\": \"Uniqlo\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PRODUCT_BASE_URL}}/product/create",
+							"host": [
+								"{{PRODUCT_BASE_URL}}"
+							],
+							"path": [
+								"product",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product_List",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Product_Detail",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Product_Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PRODUCT_BASE_URL}}/product/category/outer",
+							"host": [
+								"{{PRODUCT_BASE_URL}}"
+							],
+							"path": [
+								"product",
+								"category",
+								"outer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add_to_Cart",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"_id\": \"65645b366ea0fce853e15340\",\n    \"qty\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PRODUCT_BASE_URL}}/product/cart",
+							"host": [
+								"{{PRODUCT_BASE_URL}}"
+							],
+							"path": [
+								"product",
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove_From_Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{PRODUCT_BASE_URL}}/product/cart",
+							"host": [
+								"{{PRODUCT_BASE_URL}}"
+							],
+							"path": [
+								"product",
+								"cart"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order Service",
+			"item": [
+				{
+					"name": "Get_Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ORDER_BASE_URL}}/order/cart",
+							"host": [
+								"{{ORDER_BASE_URL}}"
+							],
+							"path": [
+								"order",
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create_Order_From_Cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"transactionId\": \"blablabla\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ORDER_BASE_URL}}/order/create",
+							"host": [
+								"{{ORDER_BASE_URL}}"
+							],
+							"path": [
+								"order",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ORDER_BASE_URL}}/order",
+							"host": [
+								"{{ORDER_BASE_URL}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transaction Service",
+			"item": [
+				{
+					"name": "Pay_For_Transaction",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"transactionId\": \"blablabla\",\n    \"channel\": \"bank transfer\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{TRANSACTION_BASE_URL}}/transaction/pay",
+							"host": [
+								"{{TRANSACTION_BASE_URL}}"
+							],
+							"path": [
+								"transaction",
+								"pay"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIxQGdtYWlsLmNvbSIsIl9pZCI6IjY1NjgxNGVjODJjNWU2OGNmODgxNTM5NSIsImlhdCI6MTcwMTMxOTkxNiwiZXhwIjoxNzAxNDA2MzE2fQ.OIVp3mYrHjCzD9OHJELWE4xIwLRCVQ_14MV50Z27eD0",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

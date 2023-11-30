@@ -48,7 +48,7 @@ module.exports.validateSignature = async (req) => {
 
 module.exports.PublishUserEvents = async (payload) => {
 
-    axios.post('http://localhost:3001/user/events', { payload });
+    axios.post('http://user:3001/user/events', { payload });
 
     console.log('Sending event to User service', payload);
 
@@ -56,7 +56,7 @@ module.exports.PublishUserEvents = async (payload) => {
 
 module.exports.PublishOrderEvents = async (payload) => {
 
-    axios.post('http://localhost:3003/order/events', { payload });
+    axios.post('http://order:3003/order/events', { payload });
 
     console.log('Sending event to Order service', payload);
     

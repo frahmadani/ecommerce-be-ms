@@ -114,6 +114,8 @@ class UserService {
 
     async SubscribeEvents(payload) {
 
+        payload = JSON.parse(payload);
+
         const { event, data } = payload;
 
         console.log('Event: ', event);

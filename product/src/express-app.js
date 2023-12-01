@@ -4,7 +4,7 @@ const { products, events } = require('./api');
 const ErrorHandler = require('./utils/error-handlers');
 
 
-module.exports = async (app) => {
+module.exports = async (app, channel) => {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true, limit: '1mb' }));
     app.use(cors());
@@ -13,7 +13,7 @@ module.exports = async (app) => {
     events(app);
 
     // Product APIs
-    products(app);
+    products(app, channel);
 
     app.use(ErrorHandler);
 };

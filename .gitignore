@@ -3,3 +3,4 @@ node_modules
 app-error.log
 db/
 proxy/
+logs/

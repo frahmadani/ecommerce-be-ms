@@ -4,3 +4,4 @@ app-error.log
 db/
 proxy/
 logs/
+*-audit.json

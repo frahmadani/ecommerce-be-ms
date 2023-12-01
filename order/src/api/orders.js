@@ -1,19 +1,10 @@
 const OrderService = require('../services/order-service');
-const { SubscribeMessage, PublishMessage } = require('../utils');
-const { USER_BINDING_KEY, ORDER_BINDING_KEY } = require('../config');
 const isAuth = require('./middlewares/auth');
+const kafkaProducer = require('../utils/kafka/kafka_producer');
 
-module.exports = (app, channel) => {
+module.exports = (app) => {
 
     const service = new OrderService();
-
-    // wait for RabbitMQ in docker finish initialize
-    setTimeout(function() {
-
-        SubscribeMessage(channel, service, ORDER_BINDING_KEY);
-
-    }, 25000);
-
 
     app.post('/order/create', isAuth, async (req, res, next) => {
 
@@ -23,18 +14,26 @@ module.exports = (app, channel) => {
         // transaction is created here
 
         try {
-            const { data } = await service.createOrder({ _id, transactionId });
+            // const { data } = await service.createOrder({ _id, transactionId }); // SEMENTARA DI COMMENT U/ DEBUGGING KAFKA
 
-            console.log('Data: ', data);
+            // console.log('Data: ', data);
 
-            const payload = await service.getOrderPayload(_id, data, 'CREATE_ORDER');
+            // const payload = await service.getOrderPayload(_id, data, 'CREATE_ORDER'); // SEMENTARA DI COMMENT U/ DEBUGGING KAFKA
 
-            // PublishUserEvents(payload.data);
-            PublishMessage(channel, USER_BINDING_KEY, JSON.stringify(payload.data));
+            const dataToKafka = {
+                topic: 'ecommerce-service-create-order',
+                body: { payload: 'Data'},
+                // body: payload,
+                partition: 1,
+                attributes: 1
+            };
 
-            // PublishTransactionEvents(payload.data); --> TODO
+            //send to kafka
+            await kafkaProducer.send(dataToKafka);
 
-            return res.status(200).json(data);
+            return res.status(200).json({ data: 'kafka called'}); // SEMENTARA DI DUMMY VALUE U/ DEBUGGING KAFKA
+
+            // return res.status(200).json(data); --> sementara di comment
 
         } catch (error) {
             return res.status(500).json(error);

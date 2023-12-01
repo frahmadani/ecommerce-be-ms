@@ -46,10 +46,12 @@ class OrderService {
         }
     }
 
-    async manageCart(userId, item, qty, isRemoving) {
+    async ManageCart(userId, item, qty, isRemoving) {
 
         try {
             const cartResult = await this.repository.AddToCart(userId, item, qty, isRemoving);
+
+            console.log('Finish managing cart');
 
             return formattedData(cartResult);
     
@@ -59,18 +61,36 @@ class OrderService {
 
     }
 
-    async SubscribeEvents(payload) {
+    async RemoveFromCart(userId, productId) {
+        try {
+            const cartResult = await this.repository.RemoveFromCart(userId, productId);
 
-        const { event, data } = payload;
+            console.log('Finish removing item from cart');
 
-        const { userId, product, qty } = data;
+            return formattedData(cartResult);
+            
+        } catch (error) {
+            throw new APIError('Data not found');
+        }
+    }
 
-        switch(event){
+    // Subscribe Event tidak digunakan lagi, diganti dgn call dari observer kafka ke masing2 service
+    async SubscribeEvents(topic, value) {
+
+        const parsedPayload = JSON.parse(value);
+
+        const { userId, product, qty } = parsedPayload.data;
+
+        switch(topic){
         case 'ADD_TO_CART':
-            this.manageCart(userId, product, qty, false);
+            console.log('menerima event ADD_TO_CART');
+            console.log('Data dari ADD_TO_CART: ', parsedPayload.data);
+            this.ManageCart(userId, product, qty, false);
             break;
         case 'REMOVE_FROM_CART':
-            this.manageCart(userId, product, qty, true);
+            console.log('menerima event REMOVE_FROM_CART');
+            console.log('Data dari REMOVE_FROM_CART: ', parsedPayload.data);
+            this.ManageCart(userId, product, qty, true);
             break;
         default:
             break;
@@ -92,7 +112,6 @@ class OrderService {
 
         return formattedData({ error: 'No order found'});
     }
-
 }
 
 module.exports = OrderService;

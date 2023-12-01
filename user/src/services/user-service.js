@@ -42,6 +42,11 @@ class UserService {
         const { email, password } = userInputs;
 
         try {
+            const existingUser = await this.repository.FindUser({ email: email });
+
+            if (existingUser) {
+                throw new APIError('User already exist');
+            }
 
             let salt = await generateSalt();
             let hashedPassword = await generatePassword(password, salt);
@@ -53,7 +58,7 @@ class UserService {
             return formattedData({ id: registeredUser._id, token });
 
         } catch (err) {
-            throw new APIError('Data not found');
+            throw new APIError('Failed signup user');
         }
     }
 
@@ -66,6 +71,23 @@ class UserService {
 
         } catch (err) {
             throw new APIError('Data not found');
+        }
+    }
+
+    async getProfileByEmail(email) {
+
+        try {
+            const existingUser = await this.repository.FindUser({ email });
+
+            if (existingUser) {
+                return formattedData(existingUser);
+            }
+
+            return;
+
+        } catch (error) {
+            throw new APIError('Error');
+
         }
     }
 
@@ -95,48 +117,56 @@ class UserService {
         try {
             const cartResult = await this.repository.AddToCart(userId, product, qty, isRemoving);
 
+            console.log('Finish managing cart');
             return formattedData(cartResult);
         } catch (err) {
             throw new APIError('Data not found');
         }
     }
 
+    async RemoveFromCart(userId, productId) {
+        try {
+            const cartResult = await this.repository.RemoveFromCart(userId, productId);
+
+            console.log('Finish removing item from cart');
+            return formattedData(cartResult);
+        } catch (err) {
+            throw new APIError('Data not found');
+        }
+    }
+
+
     async ManageOrder(userId, order) {
         console.log('========= Entering ManageOrder =======');
         try {
             const orderResult = await this.repository.CreateOrderForUser(userId, order);
 
+            console.log('Finish managing order');
             return formattedData(orderResult);
         } catch (err) {
             throw new APIError('Data not found');
         }
     }
 
-    async SubscribeEvents(payload) {
 
-        payload = JSON.parse(payload);
+    // SubscribeEvents tidak dipakai lagi. Lgsg call ke service dari event_handler
+    async SubscribeEvents(topic, value) {
 
-        const { event, data } = payload;
+        const parsedPayload = JSON.parse(value);
 
-        console.log('Event: ', event);
-        console.log('Data: ', data);
+        const { userId, product, order, qty } = parsedPayload.data;
 
-        const { userId, product, order, qty } = data;
-
-        switch(event){
-        case 'ADD_TO_WISHLIST':
-        case 'REMOVE_FROM_WISHLIST':
-            this.AddToWishlist(userId, product);
-            break;
+        switch(topic){
         case 'ADD_TO_CART':
+            console.log('Menerima event ADD_TO_CART');
             this.ManageCart(userId, product, qty, false);
             break;
         case 'REMOVE_FROM_CART':
+            console.log('Menerima event REMOVE_FROM_CART');
             this.ManageCart(userId, product, qty, true);
             break;
         case 'CREATE_ORDER':
-            console.log('userId: ', userId),
-            console.log('order: ', order);
+            console.log('Menerima event CREATE_ORDER');
             this.ManageOrder(userId, order);
             break;
         default:

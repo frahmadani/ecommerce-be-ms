@@ -83,6 +83,45 @@ class OrderRepository {
 
     }
 
+    async RemoveFromCart(userId, productId) {
+        try {
+
+            const cart = await Cart.findOne({ userId: userId});
+
+            if (cart) {
+
+                let cartItems = cart.items;
+
+                if (cartItems.length > 0) {
+
+                    cartItems.map(item => {
+
+                        if (item.product._id.toString() === productId.toString()) {
+                            cartItems.splice(cartItems.indexOf(item), 1);
+                        }
+                    });
+
+                }
+
+                cart.items = cartItems;
+
+                return await cart.save();
+
+            } else {
+                console.log('cart does not exist');
+                // cart is not exist yet
+                return await Cart.create({
+                    userId,
+                    items: []
+                });
+            }
+
+        } catch (err) {
+
+            throw new APIError('API Error', 500, 'Unable to add/remove item to cart');
+        }
+    }
+
     async CreateNewOrder(userId, transactionId) {
 
         try {

@@ -1,29 +1,25 @@
 const UserService = require('../services/user-service');
 const UserAuth = require('./middlewares/auth');
 
-const { SubscribeMessage } = require('../utils');
-const { USER_BINDING_KEY } = require('../config');
-
-module.exports = (app, channel) => {
+module.exports = async (app) => {
     
     const service = new UserService();
-
-    // wait for RabbitMQ in docker finish initialize
-    setTimeout(function() {
-
-        SubscribeMessage(channel, service, USER_BINDING_KEY);
-
-    }, 25000);
-    
 
     app.post('/user/signup', async (req, res, next) => {
         try {
             const { email, password } = req.body;
 
+            const existingUser = await service.getProfileByEmail(email);
+
+            if (existingUser) {
+                return res.status(400).json({message: 'User already exist'});
+            }
+
             const { data } = await service.signUp({ email, password });
+            
             return res.json(data);
         } catch (error) {
-            next(error);
+            return res.status(500).json({error: error, message: 'Failed to signup'});
         }
     });
 

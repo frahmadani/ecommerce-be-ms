@@ -2,6 +2,10 @@ const express = require('express');
 const { PORT } = require('./config');
 const { databaseConn } = require('./database');
 const expressApp = require('./express-app');
+const observer = require('./utils/observers');
+
+
+const { Kafka } = require('kafkajs');
 
 const StartServer = async () => {
 
@@ -9,6 +13,8 @@ const StartServer = async () => {
 
     await databaseConn();
 
+
+    observer.init();
     await expressApp(app);
 
     app.listen(PORT, () => {

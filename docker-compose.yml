@@ -11,12 +11,37 @@ services:
     volumes:
       - ./db/:/data/db
 
-  rabbitmq:
-    image: rabbitmq:management
-    container_name: rabbitmq
+  # rabbitmq:
+  #   image: rabbitmq:management
+  #   container_name: rabbitmq
+  #   ports:
+  #     - '5672:5672'
+  #     - '15672:15672'
+
+  zookeeper:
+    image: docker.io/bitnami/zookeeper:3.8
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: true
+    container_name: zookeeper
+    restart: always
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - "2181:2181"
+
+  kafka:
+    image: docker.io/bitnami/kafka:3.4
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: ${HOST_IP}
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: "topic-test:1:1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
   product:
     build:
@@ -28,7 +53,6 @@ services:
     restart: always
     depends_on:
       - "nosql-db"
-      - "rabbitmq"
     volumes:
       - .:/app
       - /app/product/node_modules
@@ -45,7 +69,6 @@ services:
     restart: always
     depends_on:
       - "nosql-db"
-      - "rabbitmq"
     volumes:
       - .:/app
       - /app/order/node_modules
@@ -62,7 +85,6 @@ services:
     restart: always
     depends_on:
       - "nosql-db"
-      - "rabbitmq"
     volumes:
       - .:/app
       - /app/transaction/node_modules
@@ -79,7 +101,6 @@ services:
     restart: always
     depends_on:
       - "nosql-db"
-      - "rabbitmq"
     volumes:
       - .:/app/
       - /app/user/node_modules

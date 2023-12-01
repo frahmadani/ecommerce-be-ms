@@ -19,5 +19,11 @@ module.exports = {
     EXCHANGE_NAME: 'ECOMMERCE_APP_EXCHANGE',
     ORDER_BINDING_KEY: 'ORDER_BINDING_KEY',
     USER_BINDING_KEY: 'USER_BINDING_KEY',
-    QUEUE_NAME: 'USER_QUEUE'
+    QUEUE_NAME: 'USER_QUEUE',
+    kafka: {
+        broker: process.env.KAFKA_HOST,
+        username: process.env.KAFKA_USERNAME,
+        password: process.env.KAFKA_PASSWORD,
+    },
+
 };

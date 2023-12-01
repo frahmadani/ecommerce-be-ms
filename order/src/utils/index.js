@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const amqplib = require('amqplib');
 
-const { APP_SECRET, MESSAGEBROKER_URL, EXCHANGE_NAME, QUEUE_NAME, ORDER_BINDING_KEY } = require('../config');
+const { APP_SECRET } = require('../config');
 
 module.exports.generateSalt = async () => {
     return await bcrypt.genSalt();
@@ -66,60 +66,60 @@ module.exports.PublishTransactionEvents = async (payload) => {
 };
 
 
-// Message Broker methods
+// RABBIT MQ Methods. Tidak digunakan lagi, diganti dengan Kafka
 
-module.exports.CreateChannel = async () => {
+// module.exports.CreateChannel = async () => {
 
-    try {
+//     try {
 
-        const connection = await amqplib.connect(MESSAGEBROKER_URL);
-        const channel = await connection.createChannel();
-        await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: false });
+//         const connection = await amqplib.connect(MESSAGEBROKER_URL);
+//         const channel = await connection.createChannel();
+//         await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: false });
 
-        return channel;
+//         return channel;
     
-    } catch (error) {
-        return error;
-    }
+//     } catch (error) {
+//         return error;
+//     }
 
-};
+// };
 
-module.exports.PublishMessage = async (channel, binding_key, message) => {
+// module.exports.PublishMessage = async (channel, binding_key, message) => {
 
-    try {
-        await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: false });
-        await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
-        console.log('Message sent: ', message);
+//     try {
+//         await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: false });
+//         await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
+//         console.log('Message sent: ', message);
 
 
-    } catch (error) {
-        return error;
-    }
-};
+//     } catch (error) {
+//         return error;
+//     }
+// };
 
-module.exports.SubscribeMessage = async (channel, service, binding_key) => {
+// module.exports.SubscribeMessage = async (channel, service, binding_key) => {
 
-    try {
-        console.log('Order service subscribing...');
+//     try {
+//         console.log('Order service subscribing...');
 
-        await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: false });
+//         await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: false });
 
-        console.log('Order service finish asserting exchange');
+//         console.log('Order service finish asserting exchange');
 
-        const appQueue = await channel.assertQueue(QUEUE_NAME);
+//         const appQueue = await channel.assertQueue(QUEUE_NAME);
 
-        channel.bindQueue(appQueue.queue, EXCHANGE_NAME, binding_key);
+//         channel.bindQueue(appQueue.queue, EXCHANGE_NAME, binding_key);
 
-        console.log(`Listening to exchange_name: ${EXCHANGE_NAME}, with binding_key: ${binding_key} and queue ${QUEUE_NAME}`);
+//         console.log(`Listening to exchange_name: ${EXCHANGE_NAME}, with binding_key: ${binding_key} and queue ${QUEUE_NAME}`);
 
-        channel.consume(appQueue.queue, data => {
-            console.log('Receive data: ');
-            console.log(data.content.toString());
-            service.SubscribeEvents(data.content.toString());
-            channel.ack(data);
-        });
+//         channel.consume(appQueue.queue, data => {
+//             console.log('Receive data: ');
+//             console.log(data.content.toString());
+//             service.SubscribeEvents(data.content.toString());
+//             channel.ack(data);
+//         });
 
-    } catch (error) {
-        return error;
-    }
-};
+//     } catch (error) {
+//         return error;
+//     }
+// };

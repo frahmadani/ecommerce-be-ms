@@ -79,6 +79,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      # Enter directory
+      - name: Enter directory
+        id: change-dir
+        run: |
+          cd user
+          docker build . --file Dockerfile --tag user:$(date +%s)
+
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image

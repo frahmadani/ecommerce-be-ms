@@ -1,6 +1,6 @@
 const kafkaConsumer = require('../../utils/kafka/kafka_consumer');
-const  Order = require('../../services/order-service');
-const order = new Order();
+const Transaction = require('../../services/transaction-service');
+const transaction = new Transaction();
 
 const addOrder = async () => {
     const dataConsumer = {

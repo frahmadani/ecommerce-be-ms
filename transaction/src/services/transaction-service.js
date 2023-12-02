@@ -41,22 +41,24 @@ class TransactionService {
         }
     }
 
-    async SubscribeEvents(payload) {
+    // Subscribe Events tidak dipakai lagi. Lgsg direct call ke service dari Event handler
+    async SubscribeEvents(topic, value) {
 
-        const { event, data } = payload;
+        const parsedPayload = JSON.parse(value);
 
-        const { userId, order } = data;
+        // const { event, data } = payload;
 
-        switch(event) {
+        const { userId, order } = parsedPayload.data;
+
+        switch(topic) {
         case 'CREATE_ORDER':
+            console.log('Data dari CREATE_ORDER: ', parsedPayload.data);
             this.CreateOrder(userId, order);
             break;
         default:
             break;
         }
-
-        console.log('Received payload on SubscribeEvents method: ', payload);
-
+        
     }
 }
 

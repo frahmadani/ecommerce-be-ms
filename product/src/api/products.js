@@ -1,8 +1,9 @@
 const ProductService = require('../services/product-service');
-const { PublishOrderEvents, PublishUserEvents } = require('../utils');
 const isAuth = require('./middlewares/auth');
+const kafkaProducer = require('../utils/kafka/kafka_producer');
 
-module.exports = (app) => {
+
+module.exports = async (app) => {
 
     const service = new ProductService();
 
@@ -55,11 +56,19 @@ module.exports = (app) => {
         try {
             const { data } = await service.getProductPayload(userId, { productId: _id, qty: qty }, 'ADD_TO_CART');
 
-            console.log('Data yg dikirim ke user service dan order service: ', data);
+            const dataToKafka = {
+                topic: 'ecommerce-service-add-to-cart',
+                body: data,
+                partition: 1,
+                attributes: 1
+            };
 
-            PublishUserEvents(data);
-            PublishOrderEvents(data);
+            await kafkaProducer.send(dataToKafka);
 
+            console.log('Data yg dikirim ke user service dan order service: ', dataToKafka);
+
+            console.log('Success sending message Add To Cart to kafka');
+        
             const response = {
                 product: data.data.product,
                 qty: data.data.qty
@@ -81,9 +90,19 @@ module.exports = (app) => {
         try {
             const { data } = await service.getProductPayload(userId, { productId }, 'REMOVE_FROM_CART');
 
-            PublishUserEvents(data);
-            PublishOrderEvents(data);
+            const dataToKafka = {
+                topic: 'ecommerce-service-remove-from-cart',
+                body: data,
+                partition: 1,
+                attributes: 1
+            };
 
+            await kafkaProducer.send(dataToKafka);
+
+            console.log('Data yg dikirim ke user service dan order service: ', dataToKafka);
+
+            console.log('Success sending message Remove From Cart to kafka');
+        
             const response = {
                 product: data.data.product,
                 qty: data.data.qty

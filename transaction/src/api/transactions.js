@@ -1,7 +1,9 @@
 const TransactionService = require('../services/transaction-service');
 const isAuth = require('./middlewares/auth'); 
+const kafkaProducer = require('../utils/kafka/kafka_producer');
 
-module.exports = (app) => {
+
+module.exports = async (app, consumer) => {
 
     const service = new TransactionService();
 
@@ -21,5 +23,4 @@ module.exports = (app) => {
         
     });
 
-    
 };

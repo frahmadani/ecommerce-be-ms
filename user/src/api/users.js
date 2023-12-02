@@ -1,7 +1,7 @@
 const UserService = require('../services/user-service');
 const UserAuth = require('./middlewares/auth');
 
-module.exports = (app) => {
+module.exports = async (app) => {
     
     const service = new UserService();
 
@@ -9,10 +9,17 @@ module.exports = (app) => {
         try {
             const { email, password } = req.body;
 
+            const existingUser = await service.getProfileByEmail(email);
+
+            if (existingUser) {
+                return res.status(400).json({message: 'User already exist'});
+            }
+
             const { data } = await service.signUp({ email, password });
+            
             return res.json(data);
         } catch (error) {
-            next(error);
+            return res.status(500).json({error: error, message: 'Failed to signup'});
         }
     });
 

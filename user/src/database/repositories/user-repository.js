@@ -103,7 +103,7 @@ class UserRepository {
 
         try {
 
-            const user = await UserModel.findById(userId).populate('cart');
+            const user = await UserModel.findById(userId);
 
             if (user) {
 
@@ -132,7 +132,7 @@ class UserRepository {
                     });
 
                     if (!isExist) {
-                        cartItems. push(cartItem);
+                        cartItems.push(cartItem);
                     }
 
                 } else {
@@ -154,7 +154,40 @@ class UserRepository {
 
             throw new APIError('API Error', 500, 'Unable to add item to cart');
         }
-    } 
+    }
+
+    async RemoveFromCart(userId, productId) {
+
+        try {
+            const user = await UserModel.findById(userId);
+
+            if (user) {
+                let cartItems = user.cart;
+
+                if (cartItems.length > 0) {
+
+                    cartItems.map(item => {
+                        if (item.product._id.toString() === productId.toString()) {
+
+                            cartItems.splice(cartItems.indexOf(item), 1);
+
+                        }
+                    });
+                }
+
+                user.cart = cartItems;
+
+                const userWithUpdatedCart = await user.save();
+
+                return userWithUpdatedCart.cart;
+
+            }
+            throw new Error('Unable to add item to cart');
+            
+        } catch (error) {
+            throw new APIError('API Error', 500, 'Unable to add item to cart');
+        }
+    }
 
     async CreateOrderForUser(userId, order) {
         

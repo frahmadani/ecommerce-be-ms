@@ -1,6 +1,6 @@
 const OrderService = require('../services/order-service');
-const { PublishUserEvents, PublishTransactionEvents } = require('../utils');
 const isAuth = require('./middlewares/auth');
+const kafkaProducer = require('../utils/kafka/kafka_producer');
 
 module.exports = (app) => {
 
@@ -14,16 +14,26 @@ module.exports = (app) => {
         // transaction is created here
 
         try {
-            const { data } = await service.createOrder({ _id, transactionId });
+            // const { data } = await service.createOrder({ _id, transactionId }); // SEMENTARA DI COMMENT U/ DEBUGGING KAFKA
 
-            console.log('Data: ', data);
+            // console.log('Data: ', data);
 
-            const payload = await service.getOrderPayload(_id, data, 'CREATE_ORDER');
+            // const payload = await service.getOrderPayload(_id, data, 'CREATE_ORDER'); // SEMENTARA DI COMMENT U/ DEBUGGING KAFKA
 
-            PublishUserEvents(payload.data);
-            PublishTransactionEvents(payload.data);
+            const dataToKafka = {
+                topic: 'ecommerce-service-create-order',
+                body: { payload: 'Data'},
+                // body: payload,
+                partition: 1,
+                attributes: 1
+            };
 
-            return res.status(200).json(data);
+            //send to kafka
+            await kafkaProducer.send(dataToKafka);
+
+            return res.status(200).json({ data: 'kafka called'}); // SEMENTARA DI DUMMY VALUE U/ DEBUGGING KAFKA
+
+            // return res.status(200).json(data); --> sementara di comment
 
         } catch (error) {
             return res.status(500).json(error);

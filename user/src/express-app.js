@@ -9,7 +9,7 @@ module.exports = async (app) => {
     app.use(cors());
     
     // Event handler (API)
-    events(app);
+    // events(app);
 
     // API
     users(app);

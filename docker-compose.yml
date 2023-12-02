@@ -1,78 +1,120 @@
-version: "3.8"
+version: "3"
 
 services:
-  user:
-    build: ./user
+
+  nosql-db:
+    image: mongo
+    restart: always
     ports:
-      - "3001:3001"
-    depends_on:
-      - rabbitmq
+      - "27017:27017"
+    container_name: nosql-db
+    volumes:
+      - ./db/:/data/db
+
+  # rabbitmq:
+  #   image: rabbitmq:management
+  #   container_name: rabbitmq
+  #   ports:
+  #     - '5672:5672'
+  #     - '15672:15672'
+
+  zookeeper:
+    image: docker.io/bitnami/zookeeper:3.8
     environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-    env_file:
-      - ./user/.env
-    networks:
-      - ecommerce
+      ALLOW_ANONYMOUS_LOGIN: true
+    container_name: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: docker.io/bitnami/kafka:3.4
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: ${HOST_IP}
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: "topic-test:1:1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
   product:
-    build: ./product
+    build:
+      dockerfile: Dockerfile
+      context: ./product
+    container_name: product
     ports:
       - "3002:3002"
+    restart: always
     depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - "nosql-db"
+    volumes:
+      - .:/app
+      - /app/product/node_modules
     env_file:
-      - ./product/.env
-    networks:
-      - ecommerce
+      - ./product/.env.dev
 
   order:
-    build: ./order
+    build:
+      dockerfile: Dockerfile
+      context: ./order
+    container_name: order
     ports:
       - "3003:3003"
+    restart: always
     depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - "nosql-db"
+    volumes:
+      - .:/app
+      - /app/order/node_modules
     env_file:
-      - ./order/.env
-    networks:
-      - ecommerce
+      - ./order/.env.dev
 
   transaction:
-    build: ./transaction
+    build:
+      dockerfile: Dockerfile
+      context: ./transaction
+    container_name: transaction
     ports:
       - "3004:3004"
+    restart: always
     depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-    env_file:
-      - ./order/.env
-    networks:
-      - ecommerce
-
-  rabbitmq:
-    image: rabbitmq:3.8-management-alpine
-    container_name: 'rabbitmq'
-    ports:
-        - 5672:5672
-        - 15672:15672
+      - "nosql-db"
     volumes:
-        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
-        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
-    networks:
-        - ecommerce
+      - .:/app
+      - /app/transaction/node_modules
+    env_file:
+      - ./transaction/.env.dev
 
-  # api-gateway:
-  #   build: ./api-gateway
+  user:
+    build:
+      dockerfile: Dockerfile
+      context: ./user
+    container_name: user
+    ports:
+      - "3001:3001"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - .:/app/
+      - /app/user/node_modules
+    env_file:
+      - ./user/.env.dev
+
+  # nginx-proxy:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./proxy
+  #   depends_on:
+  #     - product
+  #     - order
+  #     - user
+  #     - transaction
   #   ports:
-  #     - "3003:3003"
-  #   environment:
-  #     - RABBITMQ_URL=amqp://rabbitmq:5672
-  #   networks:
-  #     - ecommerce
-
-networks:
-  ecommerce:
+  #     - 80:80

@@ -20,8 +20,22 @@ Communication between services are illustrated with diagram below:
 #### Payment Transaction for an Order
 ![Alt text](<docs/assets/Pay for Transaction.jpg>)
 
-### Canceling a Transaction
+#### Canceling a Transaction
 ![Alt text](<docs/assets/Cancel Transaction.jpg>)
+
+## Data Modeling
+Masing-masing service memiliki satu atau lebih database collection yang dikelolanya.
+
+1. User Service memiliki data collection Users
+2. Product Service memiliki data collection Products
+3. Order Service memiliki data collection Carts dan Orders
+4. Transaction Service memiliki data collection Transactions
+
+Entity Diagram untuk keempat service tersebut dapat dilihat di bawah ini:
+
+![ERD All Service](<./docs/assets/img/ERD All Service.jpg>)
+
+## How to Use
 
 ### How to run individual services
 1. Clone repo
@@ -44,24 +58,8 @@ export HOST_IP=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.
 docker-compose build && docker-compose up
 ```
 
-### Run tests
+## How to Test
 `npm run test`
 
-### API Documentation
+## API Documentation
 API Documentation is provided with Postman [Click here to access](https://documenter.getpostman.com/view/3500918/2s9YeK3pdW)
-
-### Data Modeling
-Masing-masing service memiliki satu atau lebih database collection yang dikelolanya.
-
-1. User Service memiliki data collection Users
-2. Product Service memiliki data collection Products
-3. Order Service memiliki data collection Carts dan Orders
-4. Transaction Service memiliki data collection Transactions
-
-Entity Diagram untuk keempat service tersebut dapat dilihat di bawah ini:
-
-![ERD All Service](<./docs/assets/img/ERD All Service.jpg>)
-
-### Event Flow Diagram:
-
-Flow diagram of event between services can be viewed here: [Diagram Flow](https://app.diagrams.net/#G1WJJ7qRu0feedbrstCFcY8wexjpPnOLt8)

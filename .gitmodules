@@ -1,0 +1,12 @@
+[submodule "user"]
+	path = user
+	url = git@github.com:frahmadani/ecommerce-user-service.git
+[submodule "product"]
+	path = product
+	url = git@github.com:frahmadani/ecommerce-product-service.git
+[submodule "order"]
+	path = order
+	url = git@github.com:frahmadani/ecommerce-order-service.git
+[submodule "transaction"]
+	path = transaction
+	url = git@github.com:frahmadani/ecommerce-transaction-service.git

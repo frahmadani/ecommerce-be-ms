@@ -8,9 +8,10 @@ E-Commerce NodeJS MS adalah aplikasi berbasis microservices untuk mensimulasikan
 
 ### How to run individual services
 1. Clone repo
-2. Copy `.env.dev` ke `.env`
+2. Copy `.env.dev` to `.env`
 3. Ensure MongoDB & Kafka is available in the system, and update `.env` file accordingly
-3. Run `npm run dev`
+4. Change directory into individual service's directory, e.g: `cd user`
+4. Run `npm run dev`
 
 ### How to run overall project
 1. Install Docker Engine
@@ -39,6 +40,13 @@ Masing-masing service memiliki satu atau lebih database collection yang dikelola
 
 Entity Diagram untuk keempat service tersebut dapat dilihat di bawah ini:
 
+![User Service ERD](<ERD User Service.jpg>)
+
+![Product Service ERD](<ERD Product Service.jpg>)
+
+![Order Service ERD](<ERD Order Service.jpg>)
+
+![Transaction Service ERD](<ERD Transaction Service.jpg>)
 
 ### Event Flow Diagram:
 

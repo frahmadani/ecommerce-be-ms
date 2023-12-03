@@ -40,13 +40,7 @@ Masing-masing service memiliki satu atau lebih database collection yang dikelola
 
 Entity Diagram untuk keempat service tersebut dapat dilihat di bawah ini:
 
-![User Service ERD](<ERD User Service.jpg>)
-
-![Product Service ERD](<ERD Product Service.jpg>)
-
-![Order Service ERD](<ERD Order Service.jpg>)
-
-![Transaction Service ERD](<ERD Transaction Service.jpg>)
+![ERD All Service](<ERD All Service.jpg>)
 
 ### Event Flow Diagram:
 

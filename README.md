@@ -29,6 +29,17 @@ docker-compose build && docker-compose up
 ### API Documentation
 API Documentation is provided with Postman [Click here to access](https://documenter.getpostman.com/view/3500918/2s9YeK3pdW)
 
+### Data Modeling
+Masing-masing service memiliki satu atau lebih database collection yang dikelolanya.
+
+1. User Service memiliki data collection Users
+2. Product Service memiliki data collection Products
+3. Order Service memiliki data collection Carts dan Orders
+4. Transaction Service memiliki data collection Transactions
+
+Entity Diagram untuk keempat service tersebut dapat dilihat di bawah ini:
+
+
 ### Event Flow Diagram:
 
 Flow diagram of event between services can be viewed here: [Diagram Flow](https://app.diagrams.net/#G1WJJ7qRu0feedbrstCFcY8wexjpPnOLt8)

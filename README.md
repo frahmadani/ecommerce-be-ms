@@ -35,6 +35,9 @@ Entity Diagram untuk keempat service tersebut dapat dilihat di bawah ini:
 
 ![ERD All Service](<./docs/assets/img/ERD All Service.jpg>)
 
+## Logging
+Application log is available a
+
 ## How to Use
 
 ### How to run individual services
@@ -60,6 +63,9 @@ docker-compose build && docker-compose up
 
 ## How to Test
 `npm run test`
+
+Example output:
+![Alt text](<docs/assets/img/User Service Test.png>)
 
 ## API Documentation
 API Documentation is provided with Postman [Click here to access](https://documenter.getpostman.com/view/3500918/2s9YeK3pdW)

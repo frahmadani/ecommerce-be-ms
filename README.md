@@ -6,6 +6,23 @@ E-Commerce NodeJS MS adalah aplikasi berbasis microservices untuk mensimulasikan
 3. Order Service
 4. Transaction Service
 
+Communication between services are illustrated with diagram below:
+
+#### Adding items to cart:
+![Alt text](docs/assets/Add-to-Cart-flow.jpg)
+
+#### Removing items from cart:
+![Alt text](docs/assets/Remove-from-Cart.jpg)
+
+#### Creating order from cart items
+![Alt text](<docs/assets/Create Order From Cart.jpg>)
+
+#### Payment Transaction for an Order
+![Alt text](<docs/assets/Pay for Transaction.jpg>)
+
+### Canceling a Transaction
+![Alt text](<docs/assets/Cancel Transaction.jpg>)
+
 ### How to run individual services
 1. Clone repo
 2. Copy `.env.dev` to `.env`
@@ -26,6 +43,9 @@ or get current HOST_IP directly from command:
 export HOST_IP=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
 docker-compose build && docker-compose up
 ```
+
+### Run tests
+`npm run test`
 
 ### API Documentation
 API Documentation is provided with Postman [Click here to access](https://documenter.getpostman.com/view/3500918/2s9YeK3pdW)

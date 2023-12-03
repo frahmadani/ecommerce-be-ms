@@ -40,7 +40,7 @@ Masing-masing service memiliki satu atau lebih database collection yang dikelola
 
 Entity Diagram untuk keempat service tersebut dapat dilihat di bawah ini:
 
-![ERD All Service](<ERD All Service.jpg>)
+![ERD All Service](<./docs/assets/img/ERD All Service.jpg>)
 
 ### Event Flow Diagram:
 

@@ -5,3 +5,4 @@ db/
 proxy/
 logs/
 *-audit.json
+.nyc_output
